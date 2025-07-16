@@ -1,0 +1,603 @@
+<!DOCTYPE html>
+        <html>
+        <head>
+            <meta charset="UTF-8">
+            <title>&#x1f4ca; Demand Forecasting Challenge Report</title>
+            <style>
+/* From extension vscode.github */
+/*---------------------------------------------------------------------------------------------
+ *  Copyright (c) Microsoft Corporation. All rights reserved.
+ *  Licensed under the MIT License. See License.txt in the project root for license information.
+ *--------------------------------------------------------------------------------------------*/
+
+.vscode-dark img[src$=\#gh-light-mode-only],
+.vscode-light img[src$=\#gh-dark-mode-only],
+.vscode-high-contrast:not(.vscode-high-contrast-light) img[src$=\#gh-light-mode-only],
+.vscode-high-contrast-light img[src$=\#gh-dark-mode-only] {
+	display: none;
+}
+
+</style>
+            <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex/dist/katex.min.css">
+<link href="https://cdn.jsdelivr.net/npm/katex-copytex@latest/dist/katex-copytex.min.css" rel="stylesheet" type="text/css">
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/Microsoft/vscode/extensions/markdown-language-features/media/markdown.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/Microsoft/vscode/extensions/markdown-language-features/media/highlight.css">
+<style>
+            body {
+                font-family: -apple-system, BlinkMacSystemFont, 'Segoe WPC', 'Segoe UI', system-ui, 'Ubuntu', 'Droid Sans', sans-serif;
+                font-size: 14px;
+                line-height: 1.6;
+            }
+        </style>
+        <style>
+.task-list-item {
+    list-style-type: none;
+}
+
+.task-list-item-checkbox {
+    margin-left: -20px;
+    vertical-align: middle;
+    pointer-events: none;
+}
+</style>
+<style>
+:root {
+  --color-note: #0969da;
+  --color-tip: #1a7f37;
+  --color-warning: #9a6700;
+  --color-severe: #bc4c00;
+  --color-caution: #d1242f;
+  --color-important: #8250df;
+}
+
+</style>
+<style>
+@media (prefers-color-scheme: dark) {
+  :root {
+    --color-note: #2f81f7;
+    --color-tip: #3fb950;
+    --color-warning: #d29922;
+    --color-severe: #db6d28;
+    --color-caution: #f85149;
+    --color-important: #a371f7;
+  }
+}
+
+</style>
+<style>
+.markdown-alert {
+  padding: 0.5rem 1rem;
+  margin-bottom: 16px;
+  color: inherit;
+  border-left: .25em solid #888;
+}
+
+.markdown-alert>:first-child {
+  margin-top: 0
+}
+
+.markdown-alert>:last-child {
+  margin-bottom: 0
+}
+
+.markdown-alert .markdown-alert-title {
+  display: flex;
+  font-weight: 500;
+  align-items: center;
+  line-height: 1
+}
+
+.markdown-alert .markdown-alert-title .octicon {
+  margin-right: 0.5rem;
+  display: inline-block;
+  overflow: visible !important;
+  vertical-align: text-bottom;
+  fill: currentColor;
+}
+
+.markdown-alert.markdown-alert-note {
+  border-left-color: var(--color-note);
+}
+
+.markdown-alert.markdown-alert-note .markdown-alert-title {
+  color: var(--color-note);
+}
+
+.markdown-alert.markdown-alert-important {
+  border-left-color: var(--color-important);
+}
+
+.markdown-alert.markdown-alert-important .markdown-alert-title {
+  color: var(--color-important);
+}
+
+.markdown-alert.markdown-alert-warning {
+  border-left-color: var(--color-warning);
+}
+
+.markdown-alert.markdown-alert-warning .markdown-alert-title {
+  color: var(--color-warning);
+}
+
+.markdown-alert.markdown-alert-tip {
+  border-left-color: var(--color-tip);
+}
+
+.markdown-alert.markdown-alert-tip .markdown-alert-title {
+  color: var(--color-tip);
+}
+
+.markdown-alert.markdown-alert-caution {
+  border-left-color: var(--color-caution);
+}
+
+.markdown-alert.markdown-alert-caution .markdown-alert-title {
+  color: var(--color-caution);
+}
+
+</style>
+        
+        </head>
+        <body class="vscode-body vscode-light">
+            <h1 id="-demand-forecasting-challenge-report">📊 Demand Forecasting Challenge Report</h1>
+<h2 id="1--problem-description">1. 🧩 Problem Description</h2>
+<p>The task was to forecast the <strong>full probability distribution</strong> of <strong>daily demand</strong> for each <strong>item-store combination</strong> from <strong>September 12 to 18, 2022</strong>.</p>
+<ul>
+<li>
+<p><strong>Objective</strong>: Produce probabilistic forecasts rather than point estimates, capturing uncertainty around demand to better support inventory and operations planning.</p>
+</li>
+<li></li>
+<li>
+<p>📌 <strong>Assumptions</strong>:</p>
+<ul>
+<li>All stores are open every day during the forecast period.</li>
+<li>There are no stockouts during the prediction window.</li>
+</ul>
+</li>
+<li>
+<p>🧠 <strong>Why probabilistic forecasting?</strong></p>
+<ul>
+<li>Captures uncertainty, improves decision-making in inventory, pricing, and logistics.</li>
+</ul>
+</li>
+</ul>
+<hr>
+<h2 id="2--exploratory-data-analysis-eda">2. 🔍 Exploratory Data Analysis (EDA)</h2>
+<h3 id="-dataset-overview">📅 Dataset Overview</h3>
+<ul>
+<li><strong>Time Range</strong>: January 2019 to September 2022 (~3.5 years)</li>
+<li><strong>Granularity</strong>: Daily sales per item-store combination</li>
+<li><strong>Entities</strong>: 6 items × 4 stores = 24 combinations</li>
+<li><strong>Total Observations</strong>: 12,118 rows</li>
+</ul>
+<p>This time span is long enough to capture seasonal effects, promotion cycles, and external disruptions (e.g., COVID-19). The item-store structure supports hierarchical modeling approaches, and the compact size enables detailed exploration at each level.</p>
+<hr>
+<h3 id="-summary-statistics">📊 Summary Statistics</h3>
+<table>
+<thead>
+<tr>
+<th>Variable</th>
+<th>Mean</th>
+<th>Std Dev</th>
+<th>Median</th>
+<th>Max</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>sales_value</code></td>
+<td>520.02</td>
+<td>1071.97</td>
+<td>19.40</td>
+<td>20,434</td>
+</tr>
+<tr>
+<td><code>regular_price</code></td>
+<td>175.37</td>
+<td>130.07</td>
+<td>—</td>
+<td>330.40</td>
+</tr>
+<tr>
+<td><code>promo_price</code></td>
+<td>186.53</td>
+<td>114.57</td>
+<td>—</td>
+<td>296.00</td>
+</tr>
+</tbody>
+</table>
+<p>Sales values are heavily right-skewed with high variance, suggesting the presence of demand spikes. This supports the use of quantile regression rather than mean-based methods.</p>
+<p><code>promo_price</code> is only present in ~2% of rows, so I chose to rely primarily on a derived binary <code>promo_flag</code> feature for modeling promotional effects.</p>
+<ul>
+<li>
+<p><strong>Sales Value</strong></p>
+<ul>
+<li>Mean: 520.02 | Std: 1071.97 | Max: 20,434 | Median: 19.40</li>
+<li>High variance and skewness indicate presence of outliers and long-tail behavior.</li>
+</ul>
+</li>
+<li>
+<p><strong>Regular Price</strong></p>
+<ul>
+<li>Mean: 175.37 | Std: 130.07</li>
+<li>Stable distribution with meaningful item-level variability.</li>
+</ul>
+</li>
+<li>
+<p><strong>Promo Price</strong></p>
+<ul>
+<li>Present in only ~2% of rows (253/12118)</li>
+<li>Always lower than regular price when present.</li>
+<li>Promotional periods show <strong>higher variance and uplift</strong> in sales.</li>
+</ul>
+</li>
+</ul>
+<hr>
+<h3 id="-missingness--temporal-coverage">❓ Missingness &amp; Temporal Coverage</h3>
+<table>
+<thead>
+<tr>
+<th>Column</th>
+<th>Missing Values</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>promo_price</code></td>
+<td>11,865 (~98%)</td>
+</tr>
+<tr>
+<td>Other columns</td>
+<td>0</td>
+</tr>
+</tbody>
+</table>
+<p>Most item-store time series were nearly complete, with over 99% coverage. A few combinations (e.g., item5-store3) had significant gaps (coverage ≈ 81%). To handle this, I created a complete daily index for each pair and used linear interpolation when necessary.</p>
+<p><img src="file:///c:\Users\Greg\Downloads\Challenge - Data Scientist - 2\GitHub\assets\Notebook1%20-%20Distribution%20of%20Missing%20Days%20and%20Date%20Coverage%20Percentage.png" alt="Missing Days &amp; Coverage"></p>
+<hr>
+<h3 id="️-seasonality-trend--promotion-patterns">🗓️ Seasonality, Trend &amp; Promotion Patterns</h3>
+<p>I visualized aggregate sales over time to understand trends and seasonal behaviors:</p>
+<h4 id="-monthly-trends">📆 Monthly Trends</h4>
+<p><img src="file:///c:\Users\Greg\Downloads\Challenge - Data Scientist - 2\GitHub\assets\Notebook2%20-%20Total%20Sales%20Per%20Month%20All%20Stores%20and%20Items.png" alt="Monthly Sales - All Stores/Items"></p>
+<ul>
+<li><strong>Monthly seasonality</strong> is evident, with peaks in some months and dips during others.</li>
+<li><strong>COVID-era dips</strong> are visible around early 2020.</li>
+</ul>
+<h4 id="-day-of-week-effects">📅 Day-of-Week Effects</h4>
+<p><img src="file:///c:\Users\Greg\Downloads\Challenge - Data Scientist - 2\GitHub\assets\Notebook2%20-%20Total%20Sales%20Per%20dayofweek.png" alt="Day-of-week Breakdown"></p>
+<ul>
+<li>Suggests weekly seasonality; Sunday dips or Friday peaks in some combos</li>
+<li><strong>Day-of-week effects</strong> (e.g., stronger sales on weekends) suggest including calendar-based features.</li>
+</ul>
+<p><img src="file:///c:\Users\Greg\Downloads\Challenge - Data Scientist - 2\GitHub\assets\Notebook2%20-%20Total%20Sales%20Per%20dayofweek.png" alt="Day of Week Patterns"></p>
+<p>These insights guided the creation of time-based features that help the model capture structured, repeated patterns in demand.</p>
+<h4 id="-promotion-analysis">📊 Promotion Analysis</h4>
+<ul>
+<li>Promotional periods show <strong>higher variance and uplift</strong> in sales.</li>
+</ul>
+<hr>
+<h2 id="3--data-cleaning--outlier-handling">3. 🧹 Data Cleaning &amp; Outlier Handling</h2>
+<h3 id="outlier-and-anomaly-detection">Outlier and Anomaly Detection</h3>
+<p>I applied the following logic:</p>
+<ul>
+<li><strong>IQR-based filtering</strong> for non-promo, non-missing sales to detect extreme values.</li>
+<li><strong>Abnormal zero-sales runs</strong> (&gt;3 consecutive days) were flagged as potential anomalies.</li>
+</ul>
+<p>This approach helps reduce noise and prevents the model from learning misleading patterns from rare or abnormal events.</p>
+<h3 id="imputation-strategy">Imputation Strategy</h3>
+<table>
+<thead>
+<tr>
+<th>Issue</th>
+<th>Strategy</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Missing days</td>
+<td>Synthetic rows + interpolation</td>
+</tr>
+<tr>
+<td>Missing prices</td>
+<td>Forward-filled <code>regular_price</code></td>
+</tr>
+<tr>
+<td>Promo effect</td>
+<td>Estimated and subtracted to get <code>sales_depromo</code></td>
+</tr>
+<tr>
+<td>Outliers (IQR rule)</td>
+<td>Interpolated if flagged</td>
+</tr>
+<tr>
+<td>Zero-sale anomalies</td>
+<td>Flagged + interpolated</td>
+</tr>
+</tbody>
+</table>
+<p>Additionally, I estimated the <strong>average uplift from promotions</strong> and created a <code>sales_depromo</code> column by adjusting promotional-day sales. This provided a cleaner target for modeling baseline demand behavior.</p>
+<p><img src="file:///c:\Users\Greg\Downloads\Challenge - Data Scientist - 2\GitHub\assets\Notebook2%20-%20Sales%20and%20Prices.png" alt="Sales &amp; Promo Adjustments"></p>
+<p>This adjustment ensures that the model focuses on demand drivers beyond promotions, with promotional effects handled as an additive component later in the pipeline.</p>
+<hr>
+<h2 id="4-️-feature-engineering">4. 🏗️ Feature Engineering</h2>
+<h3 id="feature-set-overview">Feature Set Overview</h3>
+<p>I designed features that capture:</p>
+<ul>
+<li><strong>Seasonality</strong>: Month, week of year, day of week</li>
+<li><strong>Trends</strong>: Lagged and rolling averages of historical sales</li>
+<li><strong>Price sensitivity</strong>: Regular price, promo flag</li>
+<li><strong>Data reliability</strong>: Flags for missing data, interpolations, and outliers</li>
+</ul>
+<p>These features allow the model to learn patterns across multiple temporal scales and account for known promotional effects.</p>
+<h3 id="-core-features-used">🔑 Core Features Used</h3>
+<table>
+<thead>
+<tr>
+<th>Category</th>
+<th>Examples</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Calendar</strong></td>
+<td><code>month</code>, <code>weekofyear</code>, <code>dayofweek</code></td>
+</tr>
+<tr>
+<td><strong>Lag/Rolling</strong></td>
+<td><code>monthly_avg_sales_lag1</code>, <code>weekly_avg_sales_roll3</code></td>
+</tr>
+<tr>
+<td><strong>Price/Promo</strong></td>
+<td><code>regular_price</code>, <code>promo_flag</code></td>
+</tr>
+<tr>
+<td><strong>Preprocessing Flags</strong></td>
+<td><code>interpolated_flag</code>, <code>outlier_flag</code></td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<p>Inclusion of <code>sales_depromo</code> was in order to isolate organic demand from promo-induced spikes.</p>
+</blockquote>
+<h3 id="-additional-suggested-features">🧠 Additional Suggested Features</h3>
+<p>If available, the following could further enhance accuracy:</p>
+<ul>
+<li><strong>Weather data</strong> (e.g., rain, temperature)</li>
+<li><strong>Holiday indicators</strong></li>
+<li><strong>Regional events or sports matches</strong></li>
+<li><strong>Social media buzz</strong></li>
+<li><strong>Competitor pricing/promotions</strong></li>
+<li><strong>Foot traffic or store-level capacity</strong></li>
+<li><strong>Marketing campaigns</strong></li>
+</ul>
+<p>These could further enhance the model's responsiveness to external demand drivers.</p>
+<hr>
+<h3 id="-feature-importance-insights">📊 Feature Importance Insights</h3>
+<p><img src="file:///c:\Users\Greg\Downloads\Challenge - Data Scientist - 2\GitHub\assets\Notebook2%20-%20Feature%20Importances.png" alt="Feature Importance"></p>
+<p>Interestingly, <code>promo_flag</code> ranked among the least important features. This supports the decision to model <strong>de-promo-adjusted sales (<code>sales_depromo</code>)</strong> as the target variable — by removing the direct promotional uplift, the model could focus more on organic demand patterns that generalize better over time.</p>
+<p>The top contributors were:</p>
+<ul>
+<li><code>regular_price</code>: indicating strong price sensitivity in demand</li>
+<li><code>weekly_avg_sales_y</code>: reflecting short-term sales trends</li>
+<li><code>weekofyear</code> and <code>monthly_avg_sales_y</code>: capturing seasonal behavior at different granularities</li>
+</ul>
+<p>These results validate the value of including calendar-based and rolling sales features to model recurring demand cycles effectively.</p>
+<hr>
+<h2 id="5--modeling-approach">5. 🤖 Modeling Approach</h2>
+<h3 id="-problem-setup">🧮 Problem Setup</h3>
+<ul>
+<li>Framed as a <strong>supervised learning</strong> task.</li>
+<li>Target variable: <code>sales_depromo</code> (sales with promo effect removed).</li>
+</ul>
+<h3 id="model-selection">Model Selection</h3>
+<p>I chose <strong>LightGBM with quantile regression</strong> because:</p>
+<ul>
+<li>It efficiently handles large feature sets with non-linear interactions.</li>
+<li>Its native support for <strong>quantile objectives</strong> allows direct modeling of predictive intervals.</li>
+<li>It provides features' importance, improving model interpretability.</li>
+</ul>
+<p>Certainly! Here’s a clear explanation of <strong>quantiles</strong> and <strong>pinball loss</strong>, written in the same professional tone as your report:</p>
+<hr>
+<h4 id="-what-are-quantiles">📐 What Are Quantiles?</h4>
+<p>Quantiles are values that divide a probability distribution into intervals with equal probabilities. In forecasting, they are used to model different points of a predicted distribution instead of a single average value.</p>
+<p>For example:</p>
+<ul>
+<li>The <strong>10th percentile (q10)</strong> means there's a 10% chance the actual demand will fall below this value — a <em>low estimate</em>.</li>
+<li>The <strong>50th percentile (q50)</strong> is the <strong>median</strong> — a <em>central estimate</em> where there's a 50% chance demand will be above or below.</li>
+<li>The <strong>90th percentile (q90)</strong> indicates there's a 90% chance demand will fall below this value — a <em>high estimate</em>.</li>
+</ul>
+<h5 id="why-use-quantiles">Why use quantiles?</h5>
+<p>Quantile forecasts provide a <strong>distributional view</strong> of future demand rather than a single point forecast. This is especially useful in retail, where the cost of overestimating (e.g., overstock) and underestimating (e.g., stockouts) is not symmetric.</p>
+<hr>
+<h3 id="evaluation-metric">Evaluation Metric</h3>
+<p>I used <strong>Quantile Loss (Pinball Loss)</strong>, which is appropriate for assessing accuracy across different quantiles of the forecast distribution. It penalizes underestimation and overestimation asymmetrically, aligning well with inventory management goals.</p>
+<h4 id="-what-is-pinball-loss">📉 What Is Pinball Loss?</h4>
+<p>The <strong>pinball loss</strong> (also called quantile loss) is the evaluation metric used in quantile regression. It measures how well a predicted quantile matches the actual observed value. It is <strong>asymmetric</strong>, meaning it penalizes over- and under-predictions differently based on the quantile.</p>
+<p>The formula for pinball loss for a quantile <code>q</code> is:</p>
+<p class="katex-block"><span class="katex-display"><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><semantics><mrow><msub><mi>L</mi><mi>q</mi></msub><mo stretchy="false">(</mo><mi>y</mi><mo separator="true">,</mo><mover accent="true"><mi>y</mi><mo>^</mo></mover><mo stretchy="false">)</mo><mo>=</mo><mrow><mo fence="true">{</mo><mtable rowspacing="0.36em" columnalign="left left" columnspacing="1em"><mtr><mtd><mstyle scriptlevel="0" displaystyle="false"><mrow><mi>q</mi><mo>⋅</mo><mo stretchy="false">(</mo><mi>y</mi><mo>−</mo><mover accent="true"><mi>y</mi><mo>^</mo></mover><mo stretchy="false">)</mo></mrow></mstyle></mtd><mtd><mstyle scriptlevel="0" displaystyle="false"><mrow><mtext>if </mtext><mi>y</mi><mo>≥</mo><mover accent="true"><mi>y</mi><mo>^</mo></mover></mrow></mstyle></mtd></mtr><mtr><mtd><mstyle scriptlevel="0" displaystyle="false"><mrow><mo stretchy="false">(</mo><mn>1</mn><mo>−</mo><mi>q</mi><mo stretchy="false">)</mo><mo>⋅</mo><mo stretchy="false">(</mo><mover accent="true"><mi>y</mi><mo>^</mo></mover><mo>−</mo><mi>y</mi><mo stretchy="false">)</mo></mrow></mstyle></mtd><mtd><mstyle scriptlevel="0" displaystyle="false"><mrow><mtext>if </mtext><mi>y</mi><mo>&lt;</mo><mover accent="true"><mi>y</mi><mo>^</mo></mover></mrow></mstyle></mtd></mtr></mtable></mrow></mrow><annotation encoding="application/x-tex">L_q(y, \hat{y}) = 
+\begin{cases}
+q \cdot (y - \hat{y}) &amp; \text{if } y \geq \hat{y} \\
+(1 - q) \cdot (\hat{y} - y) &amp; \text{if } y &lt; \hat{y}
+\end{cases}
+</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1.0361em;vertical-align:-0.2861em;"></span><span class="mord"><span class="mord mathnormal">L</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.1514em;"><span style="top:-2.55em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight" style="margin-right:0.03588em;">q</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.2861em;"><span></span></span></span></span></span></span><span class="mopen">(</span><span class="mord mathnormal" style="margin-right:0.03588em;">y</span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mord accent"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.6944em;"><span style="top:-3em;"><span class="pstrut" style="height:3em;"></span><span class="mord mathnormal" style="margin-right:0.03588em;">y</span></span><span style="top:-3em;"><span class="pstrut" style="height:3em;"></span><span class="accent-body" style="left:-0.1944em;"><span class="mord">^</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.1944em;"><span></span></span></span></span></span><span class="mclose">)</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:3em;vertical-align:-1.25em;"></span><span class="minner"><span class="mopen delimcenter" style="top:0em;"><span class="delimsizing size4">{</span></span><span class="mord"><span class="mtable"><span class="col-align-l"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:1.69em;"><span style="top:-3.69em;"><span class="pstrut" style="height:3.008em;"></span><span class="mord"><span class="mord mathnormal" style="margin-right:0.03588em;">q</span><span class="mspace" style="margin-right:0.2222em;"></span><span class="mbin">⋅</span><span class="mspace" style="margin-right:0.2222em;"></span><span class="mopen">(</span><span class="mord mathnormal" style="margin-right:0.03588em;">y</span><span class="mspace" style="margin-right:0.2222em;"></span><span class="mbin">−</span><span class="mspace" style="margin-right:0.2222em;"></span><span class="mord accent"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.6944em;"><span style="top:-3em;"><span class="pstrut" style="height:3em;"></span><span class="mord mathnormal" style="margin-right:0.03588em;">y</span></span><span style="top:-3em;"><span class="pstrut" style="height:3em;"></span><span class="accent-body" style="left:-0.1944em;"><span class="mord">^</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.1944em;"><span></span></span></span></span></span><span class="mclose">)</span></span></span><span style="top:-2.25em;"><span class="pstrut" style="height:3.008em;"></span><span class="mord"><span class="mopen">(</span><span class="mord">1</span><span class="mspace" style="margin-right:0.2222em;"></span><span class="mbin">−</span><span class="mspace" style="margin-right:0.2222em;"></span><span class="mord mathnormal" style="margin-right:0.03588em;">q</span><span class="mclose">)</span><span class="mspace" style="margin-right:0.2222em;"></span><span class="mbin">⋅</span><span class="mspace" style="margin-right:0.2222em;"></span><span class="mopen">(</span><span class="mord accent"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.6944em;"><span style="top:-3em;"><span class="pstrut" style="height:3em;"></span><span class="mord mathnormal" style="margin-right:0.03588em;">y</span></span><span style="top:-3em;"><span class="pstrut" style="height:3em;"></span><span class="accent-body" style="left:-0.1944em;"><span class="mord">^</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.1944em;"><span></span></span></span></span></span><span class="mspace" style="margin-right:0.2222em;"></span><span class="mbin">−</span><span class="mspace" style="margin-right:0.2222em;"></span><span class="mord mathnormal" style="margin-right:0.03588em;">y</span><span class="mclose">)</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:1.19em;"><span></span></span></span></span></span><span class="arraycolsep" style="width:1em;"></span><span class="col-align-l"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:1.69em;"><span style="top:-3.69em;"><span class="pstrut" style="height:3.008em;"></span><span class="mord"><span class="mord text"><span class="mord">if </span></span><span class="mord mathnormal" style="margin-right:0.03588em;">y</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">≥</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mord accent"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.6944em;"><span style="top:-3em;"><span class="pstrut" style="height:3em;"></span><span class="mord mathnormal" style="margin-right:0.03588em;">y</span></span><span style="top:-3em;"><span class="pstrut" style="height:3em;"></span><span class="accent-body" style="left:-0.1944em;"><span class="mord">^</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.1944em;"><span></span></span></span></span></span></span></span><span style="top:-2.25em;"><span class="pstrut" style="height:3.008em;"></span><span class="mord"><span class="mord text"><span class="mord">if </span></span><span class="mord mathnormal" style="margin-right:0.03588em;">y</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">&lt;</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mord accent"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.6944em;"><span style="top:-3em;"><span class="pstrut" style="height:3em;"></span><span class="mord mathnormal" style="margin-right:0.03588em;">y</span></span><span style="top:-3em;"><span class="pstrut" style="height:3em;"></span><span class="accent-body" style="left:-0.1944em;"><span class="mord">^</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.1944em;"><span></span></span></span></span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:1.19em;"><span></span></span></span></span></span></span></span><span class="mclose nulldelimiter"></span></span></span></span></span></span></p>
+<p>Where:</p>
+<ul>
+<li><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>y</mi></mrow><annotation encoding="application/x-tex">y</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.625em;vertical-align:-0.1944em;"></span><span class="mord mathnormal" style="margin-right:0.03588em;">y</span></span></span></span> is the actual value</li>
+<li><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mover accent="true"><mi>y</mi><mo>^</mo></mover></mrow><annotation encoding="application/x-tex">\hat{y}</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.8889em;vertical-align:-0.1944em;"></span><span class="mord accent"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.6944em;"><span style="top:-3em;"><span class="pstrut" style="height:3em;"></span><span class="mord mathnormal" style="margin-right:0.03588em;">y</span></span><span style="top:-3em;"><span class="pstrut" style="height:3em;"></span><span class="accent-body" style="left:-0.1944em;"><span class="mord">^</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.1944em;"><span></span></span></span></span></span></span></span></span> is the predicted quantile value</li>
+<li><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>q</mi><mo>∈</mo><mo stretchy="false">(</mo><mn>0</mn><mo separator="true">,</mo><mn>1</mn><mo stretchy="false">)</mo></mrow><annotation encoding="application/x-tex">q \in (0, 1)</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.7335em;vertical-align:-0.1944em;"></span><span class="mord mathnormal" style="margin-right:0.03588em;">q</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">∈</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mopen">(</span><span class="mord">0</span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mord">1</span><span class="mclose">)</span></span></span></span> is the target quantile (e.g., 0.1, 0.5, 0.9)</li>
+</ul>
+<h5 id="why-use-pinball-loss">Why use pinball loss?</h5>
+<p>Unlike MSE or MAE, which evaluate accuracy of a mean prediction, pinball loss is <strong>tailored for quantile forecasts</strong>. It encourages the model to learn the correct conditional quantile of the target distribution, making it ideal for <strong>probabilistic forecasting</strong>.</p>
+<h3 id="data-splitting">Data Splitting</h3>
+<ul>
+<li>Used <strong>TimeSeriesSplit</strong> to ensure validation folds respected the chronological order of data.</li>
+<li>Avoided leakage of future information, which is critical for forecasting accuracy.</li>
+</ul>
+<h3 id="-grid-search-and-final-training">🔧 Grid Search and Final Training</h3>
+<ul>
+<li>Performed <strong>grid search</strong> for each quantile: <strong>q10, q50, and q90</strong></li>
+<li>Selected best models based on cross-validated pinball loss.</li>
+<li>Trained final models on the full training set using best parameters per quantile</li>
+</ul>
+<hr>
+<h2 id="6--forecasting--output">6. 🔮 Forecasting &amp; Output</h2>
+<h3 id="prediction-strategy">Prediction Strategy</h3>
+<p>For the forecast period (Sept 12–18), I:</p>
+<ol>
+<li>
+<p>Created a full item-store-date grid for all 7 days.</p>
+</li>
+<li>
+<p>Merged the latest historical rolling/lagged features and price/promo data.</p>
+</li>
+<li>
+<p>Ran all three quantile models to generate:</p>
+<ul>
+<li>10th percentile forecast (<code>pred_q10</code>)</li>
+<li>50th percentile forecast (<code>pred_q50</code>)</li>
+<li>90th percentile forecast (<code>pred_q90</code>)</li>
+</ul>
+</li>
+</ol>
+<h3 id="forecast-visuals">Forecast Visuals</h3>
+<p><img src="file:///c:\Users\Greg\Downloads\Challenge - Data Scientist - 2\GitHub\assets\Notebook2%20-%20Forecast%20with%20History%20Item1%20Store1%20v2.png" alt="Forecast with history"></p>
+<p>This plot overlays historical demand with the forecasted distribution interval:</p>
+<ul>
+<li>The shaded region between <code>q10</code> and <code>q90</code> shows the forecast uncertainty.</li>
+<li>The median line (<code>q50</code>) represents the most likely outcome.</li>
+<li>Captures both expected demand and potential volatility.</li>
+</ul>
+<hr>
+<h2 id="7--generating-discrete-demand-distribution-pmf">7. 📐 Generating Discrete Demand Distribution (PMF)</h2>
+<p>To fulfill the requirement of producing a <strong>discrete probability distribution</strong> for daily item-store demand, I used the quantile forecasts (q10, q50, q90) to construct an approximate <strong>probability mass function (PMF)</strong> over integer demand values.</p>
+<h3 id="-methodology">🧮 Methodology</h3>
+<ul>
+<li>
+<p>For each <code>(item_id, store_id, date)</code> combination, I interpolated a <strong>triangular-like distribution</strong> using the predicted quantiles:</p>
+<ul>
+<li><strong>q10</strong> (lower bound)</li>
+<li><strong>q50</strong> (most likely / mode)</li>
+<li><strong>q90</strong> (upper bound)</li>
+</ul>
+</li>
+<li>
+<p>I discretized this continuous distribution by rounding to the nearest integer values within a reasonable range (e.g., 0–21).</p>
+</li>
+<li>
+<p>Probability weights were assigned to each integer demand level such that the resulting distribution:</p>
+<ul>
+<li>Approximates the spread implied by the quantiles</li>
+<li>Sums to 1 (valid PMF)</li>
+</ul>
+</li>
+</ul>
+<h3 id="-why-this-approach">🔍 Why This Approach?</h3>
+<p>This approach allows us to represent uncertainty in a format suitable for downstream use cases, such as:</p>
+<ul>
+<li><strong>Inventory simulation</strong></li>
+<li><strong>Stochastic optimization</strong></li>
+<li><strong>Risk-aware decision making</strong></li>
+</ul>
+<h3 id="-final-output-format">✅ Final Output Format</h3>
+<p>For each item-store-date triple in the forecast window, the final output was a <strong>discrete probability distribution</strong> over demand values:</p>
+<table>
+<thead>
+<tr>
+<th>demand</th>
+<th>prob</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>0</td>
+<td>0.05</td>
+</tr>
+<tr>
+<td>1</td>
+<td>0.12</td>
+</tr>
+<tr>
+<td>2</td>
+<td>0.17</td>
+</tr>
+<tr>
+<td>...</td>
+<td>...</td>
+</tr>
+<tr>
+<td>10</td>
+<td>0.01</td>
+</tr>
+</tbody>
+</table>
+<p>This transformation from quantiles to PMF aligns with the <strong>probabilistic forecasting goal</strong> and ensures compatibility with systems that require categorical demand probabilities rather than continuous estimates.</p>
+<hr>
+<h2 id="-reflections-on-design-choices">✅ Reflections on Design Choices</h2>
+<h3 id="-why-lightgbm--quantile-regression">✔ Why LightGBM + Quantile Regression?</h3>
+<ul>
+<li>Efficient and scalable for tabular, time-aware data</li>
+<li>Allows explicit modeling of uncertainty — essential in retail contexts where over/under-forecasting have asymmetric costs</li>
+</ul>
+<h3 id="-why-quantile-loss">✔ Why Quantile Loss?</h3>
+<ul>
+<li>Unlike MSE/MAE, quantile loss aligns with business needs (e.g., planning for 90th percentile to avoid stockouts)</li>
+<li>Provides a richer view of forecast uncertainty</li>
+</ul>
+<h3 id="-why-use-sales_depromo">✔ Why Use <code>sales_depromo</code>?</h3>
+<ul>
+<li>By removing promotional effects from the target, the model focuses on <strong>organic demand</strong> patterns.</li>
+<li>This avoids overfitting to short-term promotional spikes and improves generalizability.</li>
+</ul>
+<h3 id="-why-calendar-features">✔ Why Calendar Features?</h3>
+<ul>
+<li>Sales patterns are highly seasonal — using <code>month</code>, <code>weekofyear</code>, <code>dayofweek</code> allows the model to learn these patterns explicitly.</li>
+</ul>
+<h2 id="️-opportunities-for-improvement">⚠️ Opportunities for Improvement</h2>
+<ul>
+<li>🔄 <strong>Promo modeling</strong> could be further enhanced with imputation or uplift modeling techniques.</li>
+<li>📉 Consider <strong>evaluating CRPS</strong> in future versions for richer distributional accuracy.</li>
+<li>📅 A <strong>holiday calendar</strong> or external events could boost forecast performance.</li>
+</ul>
+<hr>
+<h2 id="-summary">📦 Summary</h2>
+<table>
+<thead>
+<tr>
+<th>Component</th>
+<th>Method Used</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Model</strong></td>
+<td>LightGBM Quantile Regression</td>
+</tr>
+<tr>
+<td><strong>Evaluation</strong></td>
+<td>Quantile Loss (Pinball Loss)</td>
+</tr>
+<tr>
+<td><strong>Features</strong></td>
+<td>Calendar, Promo, Lagged/Rolling</td>
+</tr>
+<tr>
+<td><strong>Target Variable</strong></td>
+<td><code>sales_depromo</code> (promotion-adjusted)</td>
+</tr>
+<tr>
+<td><strong>Forecast Output</strong></td>
+<td>q10, q50, q90 quantiles</td>
+</tr>
+<tr>
+<td><strong>Forecast Horizon</strong></td>
+<td>Sept 12–18, 2022</td>
+</tr>
+</tbody>
+</table>
+<hr>
+
+            <script async src="https://cdn.jsdelivr.net/npm/katex-copytex@latest/dist/katex-copytex.min.js"></script>
+            
+        </body>
+        </html>
