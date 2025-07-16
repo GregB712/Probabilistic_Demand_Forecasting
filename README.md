@@ -67,9 +67,23 @@ The final output includes:
 
 ---
 
-## 📬 Questions?
+## 👨‍💻 Developed By
 
-Feel free to reach out if you’d like to discuss the approach, design decisions, or potential extensions.
+**Gregory Barbas**  
+📧 Email: [gregorybarbas@gmail.com](mailto:gregorybarbas@gmail.com)  
+💼 [LinkedIn](https://linkedin.com/in/gbarmpas)  
+🖥️ [GitHub](https://github.com/GregB712)
+
+For questions or contributions, feel free to reach out!
 
 ---
 
+## 📌 Notes
+
+-   For the sales and price data, feel free to reach out.
+
+---
+
+## 📝 License
+
+This project is licensed under the **MIT License**.
